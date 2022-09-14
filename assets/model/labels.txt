@@ -1,4 +1,4 @@
-0
-1
-2
-3
+0 Sangat Segar
+1 Segar
+2 Busuk
+3 Sangat Busuk

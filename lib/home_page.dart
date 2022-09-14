@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:ikan_laut_skripsi/theme/colors.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -12,12 +15,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int pageIndex = 0;
   final ImagePicker _picker = ImagePicker();
 
   late File _image;
   late List _results;
   bool imageSelect = false;
 
+  @override
   void initState() {
     super.initState();
     loadModel();
@@ -27,7 +32,7 @@ class _HomePageState extends State<HomePage> {
     Tflite.close();
     String res;
     res = (await Tflite.loadModel(
-        model: "assets/model/converted_model.tflite",
+        model: "assets/model/model_unquant.tflite",
         labels: 'assets/model/labels.txt'))!;
     print('model loaded');
   }
@@ -35,7 +40,7 @@ class _HomePageState extends State<HomePage> {
   Future clasification(File image) async {
     var recognitions = await Tflite.runModelOnImage(
       path: image.path,
-      numResults: 6,
+      numResults: 4,
       threshold: 0.05,
       imageMean: 127.5,
       imageStd: 127.5,
@@ -45,6 +50,7 @@ class _HomePageState extends State<HomePage> {
       _image = image;
       imageSelect = true;
     });
+    print(recognitions);
   }
 
   @override
@@ -53,13 +59,55 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('aaaaaa'),
       ),
-      body: (const Text('aa')),
+      body: getBody(),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: primary,
         onPressed: pickImage,
         tooltip: 'Pick Image',
-        child: Icon(Icons.camera),
+        child: const Icon(Icons.camera_alt),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: getFooter(),
     );
+  }
+
+  Widget getBody() {
+    return IndexedStack(
+      index: pageIndex,
+      children: const [
+        Center(
+          child: Text('Sekarang di'),
+        ),
+        Center(
+          child: Text('bbbb'),
+        )
+      ],
+    );
+  }
+
+  Widget getFooter() {
+    List<IconData> iconItems = [Ionicons.home, Ionicons.time];
+    return AnimatedBottomNavigationBar(
+        height: 64,
+        icons: iconItems,
+        activeColor: primary,
+        splashColor: white,
+        inactiveColor: black.withOpacity(0.5),
+        gapLocation: GapLocation.center,
+        notchSmoothness: NotchSmoothness.defaultEdge,
+        rightCornerRadius: 8,
+        leftCornerRadius: 8,
+        iconSize: 24,
+        activeIndex: pageIndex,
+        onTap: (index) {
+          setTabs(index);
+        });
+  }
+
+  setTabs(index) {
+    setState(() {
+      pageIndex = index;
+    });
   }
 
   Future pickImage() async {
