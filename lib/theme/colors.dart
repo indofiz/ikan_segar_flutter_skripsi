@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-var primary = Color.fromARGB(255, 0, 84, 149);
-var secondary = Color.fromARGB(255, 19, 188, 106);
-var white = Color(0xFFFFFFFF);
-var bgColor = Color(0xFFf0f1f3);
-var black = Color(0xFF000000);
-var textFieldColor = Colors.grey.withOpacity(0.15);
-var yellowStar = Color(0xFFfacb00);
+var primary = const Color(0xFF0076BE);
+var secondary = const Color.fromARGB(255, 19, 188, 106);
+var white = const Color(0xFFFFFFFF);
+var bgColor = const Color(0xFFfafcff);
+var black = const Color(0xFF222222);
+var border = const Color(0xFFdddddd);
+var textFieldColor = Colors.grey.withOpacity(0.9);
+var yellowStar = const Color(0xFFfacb00);
