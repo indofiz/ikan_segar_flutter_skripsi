@@ -1,11 +1,14 @@
 import 'dart:io';
 
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:ikan_laut_skripsi/pages/home.dart';
 import 'package:ikan_laut_skripsi/theme/colors.dart';
+import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -36,7 +39,6 @@ class _HomePageState extends State<HomePage> {
     (await Tflite.loadModel(
         model: "assets/model/model_unquant.tflite",
         labels: 'assets/model/labels.txt'))!;
-    print('model loaded');
   }
 
   Future clasification(File image) async {
@@ -52,7 +54,7 @@ class _HomePageState extends State<HomePage> {
       _image = image;
       imageSelect = true;
     });
-    print(recognitions);
+    uploadImage(image, recognitions!);
   }
 
   @override
@@ -117,20 +119,34 @@ class _HomePageState extends State<HomePage> {
       source: ImageSource.gallery,
     );
     File image = File(pickedFile!.path);
-    uploadImage(image);
+
     clasification(image);
   }
 
-  Future uploadImage(File image) async {
+  Future uploadImage(File image, List predictions) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? email = prefs.getString('email');
+    String tanggal = DateFormat("yyyy-MM-dd").format(DateTime.now());
+    String waktu = DateFormat("HH:mm:ss").format(DateTime.now());
     String fileName = image.path.split('/').last;
     final path = 'files/$fileName';
-    print(fileName);
     final ref = FirebaseStorage.instance.ref().child(path);
     uploadTask = ref.putFile(image);
     final snapshot = await uploadTask!.whenComplete(() => {});
-
     final urlDownload = await snapshot.ref.getDownloadURL();
-    print('download link: $urlDownload');
+
+    // SIMPAN DATA
+    final docPrediksi = FirebaseFirestore.instance.collection('prediksi').doc();
+
+    final json = {
+      'id': docPrediksi.id,
+      'email': email,
+      'tanggal': tanggal,
+      'waktu': waktu,
+      'prediksi': predictions,
+      'urlgambar': urlDownload
+    };
+    await docPrediksi.set(json);
     // buildProgress();
   }
 
@@ -165,4 +181,38 @@ class _HomePageState extends State<HomePage> {
   //         );
   //       }
   //     });
+}
+
+class Prediksi {
+  String id;
+  final String email;
+  final String tanggal;
+  final String waktu;
+  final List prediksi;
+  final String urlgambar;
+
+  Prediksi(
+      {this.id = '',
+      required this.email,
+      required this.tanggal,
+      required this.waktu,
+      required this.prediksi,
+      required this.urlgambar});
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'email': email,
+        'tanggal': tanggal,
+        'waktu': waktu,
+        'prediction': prediksi,
+        'urlgambar': prediksi
+      };
+
+  static Prediksi fromJson(Map<String, dynamic> json) => Prediksi(
+      id: json['id'],
+      email: json['email'],
+      tanggal: json['tanggal'],
+      waktu: json['waktu'],
+      prediksi: json['prediksi'],
+      urlgambar: json['urlgambar']);
 }

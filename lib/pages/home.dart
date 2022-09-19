@@ -22,49 +22,47 @@ class _PageHomeState extends State<PageHome> {
   }
 
   Widget ciriIkan() {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(
-            height: 24,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(
+          height: 24,
+        ),
+        const Padding(
+          padding: EdgeInsets.only(bottom: 12),
+          child: TitleSection(
+            title: 'Ketahui Ciri Ikan?',
+            subtitle: 'Hanya jenis berikut yang bisa diidentifikasi',
           ),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 12),
-            child: TitleSection(
-              title: 'Ketahui Ciri Ikan?',
-              subtitle: 'Hanya jenis berikut yang bisa diidentifikasi',
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: const [
+            CardCiri(
+              image: 'assets/images/kembung.png',
+              title: 'Selar Como',
             ),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              CardCiri(
-                image: 'assets/images/kembung.png',
-                title: 'Selar Como',
-              ),
-              CardCiri(
-                image: 'assets/images/selar_como.png',
-                title: 'Kembung',
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 32,
-          ),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 12),
-            child: TitleSection(
-              title: 'Riwayat Identifikasi',
-              subtitle:
-                  'Berikut riwayat ikan diidentifikasi yang pernah dilakukan',
+            CardCiri(
+              image: 'assets/images/selar_como.png',
+              title: 'Kembung',
             ),
+          ],
+        ),
+        const SizedBox(
+          height: 32,
+        ),
+        const Padding(
+          padding: EdgeInsets.only(bottom: 12),
+          child: TitleSection(
+            title: 'Riwayat Identifikasi',
+            subtitle:
+                'Berikut riwayat ikan diidentifikasi yang pernah dilakukan',
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
