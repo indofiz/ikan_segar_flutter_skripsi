@@ -4,7 +4,9 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:ikan_laut_skripsi/components/prediksi.dart';
 import 'package:ikan_laut_skripsi/pages/home.dart';
+import 'package:ikan_laut_skripsi/pages/riwayat.dart';
 import 'package:ikan_laut_skripsi/theme/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
@@ -83,7 +85,7 @@ class _HomePageState extends State<HomePage> {
           child: PageHome(),
         ),
         Center(
-          child: Text('bbbb'),
+          child: Riwayat(),
         )
       ],
     );
@@ -123,7 +125,7 @@ class _HomePageState extends State<HomePage> {
     clasification(image);
   }
 
-  Future uploadImage(File image, List predictions) async {
+  Future uploadImage(File image, List prediksi) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? email = prefs.getString('email');
     String tanggal = DateFormat("yyyy-MM-dd").format(DateTime.now());
@@ -138,81 +140,16 @@ class _HomePageState extends State<HomePage> {
     // SIMPAN DATA
     final docPrediksi = FirebaseFirestore.instance.collection('prediksi').doc();
 
-    final json = {
-      'id': docPrediksi.id,
-      'email': email,
-      'tanggal': tanggal,
-      'waktu': waktu,
-      'prediksi': predictions,
-      'urlgambar': urlDownload
-    };
+    final prediksiKirim = Prediksi(
+      id: docPrediksi.id,
+      email: email!,
+      tanggal: tanggal,
+      waktu: waktu,
+      prediksi: prediksi,
+      urlgambar: urlDownload,
+    );
+    final json = prediksiKirim.toJson();
+
     await docPrediksi.set(json);
-    // buildProgress();
   }
-
-  // Widget buildProgress() => StreamBuilder<TaskSnapshot>(
-  //     stream: uploadTask?.snapshotEvents,
-  //     builder: (context, snapshot) {
-  //       if (snapshot.hasData) {
-  //         final data = snapshot.data!;
-  //         double progress = data.bytesTransferred / data.totalBytes;
-  //         return SizedBox(
-  //           height: 50,
-  //           child: Stack(
-  //             fit: StackFit.expand,
-  //             children: [
-  //               LinearProgressIndicator(
-  //                 value: progress,
-  //                 backgroundColor: border,
-  //                 color: primary,
-  //               ),
-  //               Center(
-  //                 child: Text(
-  //                   '${(100 * progress).roundToDouble()}%',
-  //                   style: TextStyle(color: white),
-  //                 ),
-  //               )
-  //             ],
-  //           ),
-  //         );
-  //       } else {
-  //         return const SizedBox(
-  //           height: 50,
-  //         );
-  //       }
-  //     });
-}
-
-class Prediksi {
-  String id;
-  final String email;
-  final String tanggal;
-  final String waktu;
-  final List prediksi;
-  final String urlgambar;
-
-  Prediksi(
-      {this.id = '',
-      required this.email,
-      required this.tanggal,
-      required this.waktu,
-      required this.prediksi,
-      required this.urlgambar});
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'email': email,
-        'tanggal': tanggal,
-        'waktu': waktu,
-        'prediction': prediksi,
-        'urlgambar': prediksi
-      };
-
-  static Prediksi fromJson(Map<String, dynamic> json) => Prediksi(
-      id: json['id'],
-      email: json['email'],
-      tanggal: json['tanggal'],
-      waktu: json['waktu'],
-      prediksi: json['prediksi'],
-      urlgambar: json['urlgambar']);
 }

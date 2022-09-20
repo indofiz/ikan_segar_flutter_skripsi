@@ -17,18 +17,22 @@ class TitleSection extends StatelessWidget {
           title,
           style: GoogleFonts.inter(
               textStyle: TextStyle(
-                  color: black, fontSize: 18, fontWeight: FontWeight.w700)),
+                  color: black, fontSize: 22, fontWeight: FontWeight.w700)),
         ),
         const SizedBox(
           height: 4,
         ),
-        Text(
-          subtitle,
-          style: GoogleFonts.poppins(
-              textStyle: TextStyle(
-                  color: textFieldColor,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w300)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Text(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+                textStyle: TextStyle(
+                    color: textFieldColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w300)),
+          ),
         ),
       ],
     );
