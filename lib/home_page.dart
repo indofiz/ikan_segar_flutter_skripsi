@@ -130,6 +130,7 @@ class _HomePageState extends State<HomePage> {
     final String? email = prefs.getString('email');
     String tanggal = DateFormat("yyyy-MM-dd").format(DateTime.now());
     String waktu = DateFormat("HH:mm:ss").format(DateTime.now());
+    DateTime createdAt = DateTime.now();
     String fileName = image.path.split('/').last;
     final path = 'files/$fileName';
     final ref = FirebaseStorage.instance.ref().child(path);
@@ -141,13 +142,13 @@ class _HomePageState extends State<HomePage> {
     final docPrediksi = FirebaseFirestore.instance.collection('prediksi').doc();
 
     final prediksiKirim = Prediksi(
-      id: docPrediksi.id,
-      email: email!,
-      tanggal: tanggal,
-      waktu: waktu,
-      prediksi: prediksi,
-      urlgambar: urlDownload,
-    );
+        id: docPrediksi.id,
+        email: email!,
+        tanggal: tanggal,
+        waktu: waktu,
+        prediksi: prediksi,
+        urlgambar: urlDownload,
+        createdAt: createdAt);
     final json = prediksiKirim.toJson();
 
     await docPrediksi.set(json);
