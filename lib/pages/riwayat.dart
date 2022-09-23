@@ -86,7 +86,7 @@ class _RiwayatState extends State<Riwayat> {
             },
             backgroundColor: Colors.red,
             icon: Ionicons.trash,
-            label: 'Hapus',
+            label: 'Hapus 2',
           )
         ],
       ),
