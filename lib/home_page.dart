@@ -1,21 +1,20 @@
 import 'dart:io';
 
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:ikan_laut_skripsi/components/prediksi.dart';
+import 'package:ikan_laut_skripsi/pages/hasil_klasifikasi.dart';
 import 'package:ikan_laut_skripsi/pages/home.dart';
 import 'package:ikan_laut_skripsi/pages/riwayat.dart';
 import 'package:ikan_laut_skripsi/theme/colors.dart';
-import 'package:intl/intl.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image_picker/image_picker.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final String email;
+  const HomePage({Key? key, required this.email}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -43,36 +42,124 @@ class _HomePageState extends State<HomePage> {
         labels: 'assets/model/labels.txt'))!;
   }
 
-  Future clasification(File image) async {
-    var recognitions = await Tflite.runModelOnImage(
-      path: image.path,
-      numResults: 4,
-      threshold: 0.05,
-      imageMean: 127.5,
-      imageStd: 127.5,
-    );
-    setState(() {
-      _results = recognitions!;
-      _image = image;
-      imageSelect = true;
-    });
-    uploadImage(image, recognitions!);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: bgColor,
-        body: getBody(),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: primary,
-          onPressed: pickImage,
-          tooltip: 'Ambil Gambar',
-          child: const Icon(Icons.camera_alt),
+    return Container(
+      color: white,
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: bgColor,
+          body: getBody(),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: primary,
+            onPressed: () {
+              showModalBottomSheet<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return Container(
+                    height: 200,
+                    color: white,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            'Ambil Gambar:',
+                            style: TextStyle(
+                                color: black,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 16),
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 40),
+                            width: double.infinity,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor: primary,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 16),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                alignment: Alignment.centerLeft,
+                              ),
+                              onPressed: (() {
+                                pickImage(ImageSource.camera);
+                                Navigator.pop(context);
+                              }),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Ionicons.camera,
+                                    color: white,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(
+                                    width: 14,
+                                  ),
+                                  Text(
+                                    'Kamera Handphone',
+                                    style: TextStyle(
+                                        color: white,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 40),
+                            width: double.infinity,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor: primary,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 16),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                alignment: Alignment.centerLeft,
+                              ),
+                              onPressed: (() {
+                                pickImage(ImageSource.gallery);
+                                Navigator.pop(context);
+                              }),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Ionicons.images,
+                                    color: white,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(
+                                    width: 14,
+                                  ),
+                                  Text(
+                                    'Galeri Handphone',
+                                    style: TextStyle(
+                                        color: white,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+            tooltip: 'Ambil Gambar',
+            child: const Icon(Icons.camera_alt),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar: getFooter(),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        bottomNavigationBar: getFooter(),
       ),
     );
   }
@@ -80,12 +167,12 @@ class _HomePageState extends State<HomePage> {
   Widget getBody() {
     return IndexedStack(
       index: pageIndex,
-      children: const [
+      children: [
         Center(
-          child: PageHome(),
+          child: PageHome(email: widget.email),
         ),
         Center(
-          child: Riwayat(),
+          child: Riwayat(email: widget.email),
         )
       ],
     );
@@ -116,41 +203,67 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery,
-    );
-    File image = File(pickedFile!.path);
+  Future<void> pickImage(ImageSource type) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: type,
+      );
+      File image = File(pickedFile!.path);
 
-    clasification(image);
+      // clasification(image);
+      _cropImage(image);
+    } catch (error) {
+      print("error: $error");
+    }
   }
 
-  Future uploadImage(File image, List prediksi) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? email = prefs.getString('email');
-    String tanggal = DateFormat("yyyy-MM-dd").format(DateTime.now());
-    String waktu = DateFormat("HH:mm:ss").format(DateTime.now());
-    DateTime createdAt = DateTime.now();
-    String fileName = image.path.split('/').last;
-    final path = 'files/$fileName';
-    final ref = FirebaseStorage.instance.ref().child(path);
-    uploadTask = ref.putFile(image);
-    final snapshot = await uploadTask!.whenComplete(() => {});
-    final urlDownload = await snapshot.ref.getDownloadURL();
+  Future<void> _cropImage(File pickedFile) async {
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: pickedFile.path,
+      // aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      aspectRatioPresets: [CropAspectRatioPreset.square],
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: primary,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: true,
+        )
+      ],
+    );
+    if (croppedFile != null) {
+      final fileImage = File(croppedFile.path);
 
-    // SIMPAN DATA
-    final docPrediksi = FirebaseFirestore.instance.collection('prediksi').doc();
+      clasification(fileImage);
+    }
+  }
 
-    final prediksiKirim = Prediksi(
-        id: docPrediksi.id,
-        email: email!,
-        tanggal: tanggal,
-        waktu: waktu,
-        prediksi: prediksi,
-        urlgambar: urlDownload,
-        createdAt: createdAt);
-    final json = prediksiKirim.toJson();
-
-    await docPrediksi.set(json);
+  Future clasification(File image) async {
+    var recognitions = await Tflite.runModelOnImage(
+      path: image.path,
+      numResults: 4,
+      threshold: 0.05,
+      imageMean: 127.5,
+      imageStd: 127.5,
+    );
+    setState(() {
+      _results = recognitions!;
+      _image = image;
+      imageSelect = true;
+    });
+    await Future.delayed(
+      const Duration(milliseconds: 300),
+      () => {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                HasilKlasifikasi(image: image, prediksi: recognitions!),
+          ),
+        )
+      },
+    );
+    // uploadImage(image, recognitions!);
   }
 }

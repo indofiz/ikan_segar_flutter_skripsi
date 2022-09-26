@@ -1,23 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:ikan_laut_skripsi/components/prediksi.dart';
 import 'package:ikan_laut_skripsi/components/title_section.dart';
 import 'package:ikan_laut_skripsi/theme/colors.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Riwayat extends StatefulWidget {
-  const Riwayat({super.key});
+  final String email;
+  const Riwayat({super.key, required this.email});
 
   @override
   State<Riwayat> createState() => _RiwayatState();
 }
 
 class _RiwayatState extends State<Riwayat> {
-  late String? emailAwait;
   Stream<List<Prediksi>> readPrediksi() => FirebaseFirestore.instance
       .collection('prediksi')
+      .where('email', isEqualTo: widget.email)
       .orderBy('createdAt', descending: true)
       .snapshots()
       .map((snapshot) =>
@@ -25,15 +26,16 @@ class _RiwayatState extends State<Riwayat> {
 
   @override
   Widget build(BuildContext context) {
-    // getEmail();
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const SizedBox(
-          height: 40,
+          height: 24,
         ),
         const TitleSection(
           title: 'Riwayat Klasifikasi',
-          subtitle: 'Berikut riwayat klasifikasi sesuai email',
+          subtitle: 'Berikut riwayat ikan diidentifikasi yang pernah dilakukan',
         ),
         const SizedBox(
           height: 24,
@@ -63,14 +65,6 @@ class _RiwayatState extends State<Riwayat> {
     );
   }
 
-  Future getEmail() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? email = prefs.getString('email');
-    setState(() {
-      emailAwait = email;
-    });
-  }
-
   Widget buildPrediksi(Prediksi prediksi) {
     // print(emailAwait);
     return Slidable(
@@ -82,11 +76,12 @@ class _RiwayatState extends State<Riwayat> {
               final docPrediksi = FirebaseFirestore.instance
                   .collection('prediksi')
                   .doc(prediksi.id);
+              FirebaseStorage.instance.refFromURL(prediksi.urlgambar).delete();
               docPrediksi.delete();
             },
             backgroundColor: Colors.red,
             icon: Ionicons.trash,
-            label: 'Hapus 2',
+            label: 'Hapus',
           )
         ],
       ),

@@ -5,7 +5,8 @@ import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  final String email;
+  const SplashScreen({super.key, required this.email});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -32,12 +33,25 @@ class _SplashScreenState extends State<SplashScreen> {
     await prefs.setString('email', emailController.text);
     if (emailController.text.isNotEmpty && emailController.text != '') {
       await prefs.setBool('isEmail', true);
+      redirect();
+    }
+  }
+
+  void redirect() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString('email') ?? '';
+    if (email.isNotEmpty && email != '') {
+      // print(email);
       await Future.delayed(
         const Duration(milliseconds: 300),
         () => {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
+            MaterialPageRoute(
+              builder: (context) => HomePage(
+                email: email,
+              ),
+            ),
           )
         },
       );
