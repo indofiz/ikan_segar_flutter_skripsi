@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ikan_laut_skripsi/components/card_ciri.dart';
+import 'package:ikan_laut_skripsi/components/no_histori.dart';
 import 'package:ikan_laut_skripsi/components/prediksi.dart';
 import 'package:ikan_laut_skripsi/components/title_section.dart';
+import 'package:ikan_laut_skripsi/pages/detail_klasifikasi.dart';
 import 'package:ikan_laut_skripsi/theme/colors.dart';
 
 class PageHome extends StatefulWidget {
@@ -25,31 +27,43 @@ class _PageHomeState extends State<PageHome> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        welcomePage(),
-        ciriIkan(),
-        Expanded(
-          child: StreamBuilder<List<Prediksi>>(
-            stream: readPrediksi(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Text('Something wrong! ${snapshot.error}');
-              } else if (snapshot.hasData) {
-                final prediks = snapshot.data!;
-                return ListView(
-                  physics: const BouncingScrollPhysics(),
-                  children: prediks.map(buildPrediksi).toList(),
-                );
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            },
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          welcomePage(),
+          Flexible(child: ciriIkan()),
+          Flexible(
+            child: StreamBuilder<List<Prediksi>>(
+              stream: readPrediksi(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Something wrong! ${snapshot.error}');
+                } else if (snapshot.hasData) {
+                  final prediks = snapshot.data;
+                  return prediks == null || prediks.isEmpty
+                      ? const NoHistori()
+                      : ListView(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          physics: const BouncingScrollPhysics(),
+                          children: prediks.map(buildPrediksi).toList(),
+                        );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
           ),
-        ),
-      ],
+          const SizedBox(
+            height: 40,
+          ),
+        ],
+      ),
     );
   }
 
@@ -72,12 +86,13 @@ class _PageHomeState extends State<PageHome> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: const [
             CardCiri(
-              image: 'assets/images/kembung.png',
-              title: 'Selar Como',
-            ),
+                image: 'assets/images/selar_como.png',
+                title: 'Selar Como',
+                index: 0),
             CardCiri(
-              image: 'assets/images/selar_como.png',
+              image: 'assets/images/kembung.png',
               title: 'Kembung',
+              index: 1,
             ),
           ],
         ),
@@ -98,33 +113,34 @@ class _PageHomeState extends State<PageHome> {
 
   Widget welcomePage() {
     return Container(
-        decoration: BoxDecoration(
-            color: primary, borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.all(16),
-        margin: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Selamat Datang',
-              style: TextStyle(
-                  color: white, fontWeight: FontWeight.w600, fontSize: 18),
-            ),
-            Text(
-              widget.email,
-              style: TextStyle(
-                  color: white, fontWeight: FontWeight.w400, fontSize: 12),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Text(
-              'Aplikasi bisa digunakan untuk mendeteksi kesegaran ikan laut selar como (hapau) dan kembung.',
-              style: TextStyle(color: white.withOpacity(0.8)),
-            )
-          ],
-        ));
+      decoration: BoxDecoration(
+          color: primary, borderRadius: BorderRadius.circular(12)),
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.all(12),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Selamat Datang',
+            style: TextStyle(
+                color: white, fontWeight: FontWeight.w600, fontSize: 18),
+          ),
+          Text(
+            widget.email,
+            style: TextStyle(
+                color: white, fontWeight: FontWeight.w400, fontSize: 12),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Text(
+            'Aplikasi bisa digunakan untuk mendeteksi kesegaran ikan laut selar como (hapau) dan kembung.',
+            style: TextStyle(color: white.withOpacity(0.8)),
+          )
+        ],
+      ),
+    );
   }
 
   Widget buildPrediksi(Prediksi prediksi) {
@@ -136,23 +152,30 @@ class _PageHomeState extends State<PageHome> {
           color: white,
           borderRadius: BorderRadius.circular(8)),
       child: ListTile(
-        leading: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minWidth: 44,
-            minHeight: 44,
-            maxWidth: 64,
-            maxHeight: 64,
-          ),
-          child: ClipRRect(
+          leading: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minWidth: 44,
+              minHeight: 44,
+              maxWidth: 64,
+              maxHeight: 64,
+            ),
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.network(prediksi.urlgambar, fit: BoxFit.cover)),
-        ),
-        title: Text(
-          prediksi.prediksi[0]['label'].toString(),
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: Text('${prediksi.tanggal} - ${prediksi.waktu}'),
-      ),
+              child: Image.network(prediksi.urlgambar, fit: BoxFit.cover),
+            ),
+          ),
+          title: Text(
+            prediksi.prediksi[0]['label'].toString(),
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+          subtitle: Text('${prediksi.tanggal} - ${prediksi.waktu}'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DetailKlasifikasi(id: prediksi.id)),
+            );
+          }),
     );
   }
 }

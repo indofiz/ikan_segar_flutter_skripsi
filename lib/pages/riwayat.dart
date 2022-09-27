@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:ikan_laut_skripsi/components/no_data.dart';
 import 'package:ikan_laut_skripsi/components/prediksi.dart';
 import 'package:ikan_laut_skripsi/components/title_section.dart';
+import 'package:ikan_laut_skripsi/pages/detail_klasifikasi.dart';
 import 'package:ikan_laut_skripsi/theme/colors.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ionicons/ionicons.dart';
@@ -47,13 +49,15 @@ class _RiwayatState extends State<Riwayat> {
                 if (snapshot.hasError) {
                   return Text('Something wrong! ${snapshot.error}');
                 } else if (snapshot.hasData) {
-                  final prediks = snapshot.data!;
-                  return SlidableAutoCloseBehavior(
-                    closeWhenOpened: true,
-                    child: ListView(
-                      children: prediks.map(buildPrediksi).toList(),
-                    ),
-                  );
+                  final prediks = snapshot.data;
+                  return prediks == null || prediks.isEmpty
+                      ? const NoData()
+                      : SlidableAutoCloseBehavior(
+                          closeWhenOpened: true,
+                          child: ListView(
+                            children: prediks.map(buildPrediksi).toList(),
+                          ),
+                        );
                 } else {
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -68,6 +72,7 @@ class _RiwayatState extends State<Riwayat> {
   Widget buildPrediksi(Prediksi prediksi) {
     // print(emailAwait);
     return Slidable(
+      closeOnScroll: true,
       endActionPane: ActionPane(
         motion: const StretchMotion(),
         children: [
@@ -108,6 +113,13 @@ class _RiwayatState extends State<Riwayat> {
             style: const TextStyle(fontWeight: FontWeight.w500),
           ),
           subtitle: Text('${prediksi.tanggal} - ${prediksi.waktu}'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DetailKlasifikasi(id: prediksi.id)),
+            );
+          },
         ),
       ),
     );

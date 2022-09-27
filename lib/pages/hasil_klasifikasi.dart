@@ -23,6 +23,8 @@ class HasilKlasifikasi extends StatefulWidget {
 class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
   UploadTask? uploadTask;
 
+  List<Color> warna = [sangatSegar, segar, busuk, sangatBusuk];
+
   @override
   void initState() {
     super.initState();
@@ -51,82 +53,113 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
 
   Widget bodyHasil() {
     return Center(
-        child: Container(
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-      child: Column(
-        children: [
-          const TitleSection(
-            title: 'Hasil Klasifikasi',
-            subtitle:
-                'Berikut adalah hasil identifikasi mata ikan yang berdasarkan foto.',
-          ),
-          const SizedBox(
-            height: 24,
-          ),
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-                border: Border.all(color: black.withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(18)),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                minWidth: 184,
-                minHeight: 184,
-                maxWidth: 204,
-                maxHeight: 204,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.file(widget.image, fit: BoxFit.cover),
-              ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+        child: Column(
+          children: [
+            const TitleSection(
+              title: 'Hasil Klasifikasi',
+              subtitle:
+                  'Berikut adalah hasil identifikasi mata ikan yang berdasarkan foto.',
             ),
-          ),
-          const SizedBox(
-            height: 24,
-          ),
-          Text(
-            widget.prediksi[0]['label'],
-            style: const TextStyle(
-              color: Colors.orange,
-              fontWeight: FontWeight.w600,
-              fontSize: 32,
+            const SizedBox(
+              height: 24,
             ),
-          ),
-          const SizedBox(
-            height: 2,
-          ),
-          Text(
-            'Selar Como (Hapau)',
-            style: TextStyle(
-              color: black.withOpacity(0.7),
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-            ),
-          ),
-          const Spacer(),
-          Container(
-            padding: EdgeInsets.zero,
-            width: double.infinity,
-            child: TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: primary,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                alignment: Alignment.center,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Kembali',
-                style: TextStyle(color: white),
-                textAlign: TextAlign.center,
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                  border: Border.all(color: black.withOpacity(0.3)),
+                  borderRadius: BorderRadius.circular(18)),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minWidth: 184,
+                  minHeight: 184,
+                  maxWidth: 204,
+                  maxHeight: 204,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.file(widget.image, fit: BoxFit.cover),
+                ),
               ),
             ),
-          )
-        ],
+            const SizedBox(
+              height: 24,
+            ),
+            Text(
+              widget.prediksi[0]['label'],
+              style: TextStyle(
+                color: warna[widget.prediksi[0]['index']],
+                fontWeight: FontWeight.w600,
+                fontSize: 32,
+              ),
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            Text(
+              'Selar Como (Hapau)',
+              style: TextStyle(
+                color: black.withOpacity(0.7),
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+              ),
+            ),
+            const Spacer(),
+            Container(
+              padding: EdgeInsets.zero,
+              width: double.infinity,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(0))),
+                  backgroundColor: primary,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  alignment: Alignment.center,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  'Kembali',
+                  style: TextStyle(color: white),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            buildProgress()
+          ],
+        ),
       ),
-    ));
+    );
   }
+
+  Widget buildProgress() => StreamBuilder<TaskSnapshot>(
+        stream: uploadTask?.snapshotEvents,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final data = snapshot.data!;
+            double progress = data.bytesTransferred / data.totalBytes;
+            return SizedBox(
+              height: 5,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: primary.withOpacity(0.3),
+                    color: secondary,
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return const SizedBox(
+              height: 0,
+            );
+          }
+        },
+      );
 
   Future uploadImage(File image, List prediksi) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -137,7 +170,9 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
     String fileName = image.path.split('/').last;
     final path = 'files/$fileName';
     final ref = FirebaseStorage.instance.ref().child(path);
-    uploadTask = ref.putFile(image);
+    setState(() {
+      uploadTask = ref.putFile(image);
+    });
     final snapshot = await uploadTask!.whenComplete(() => {});
     final urlDownload = await snapshot.ref.getDownloadURL();
 
@@ -155,5 +190,8 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
     final json = prediksiKirim.toJson();
 
     await docPrediksi.set(json);
+    setState(() {
+      uploadTask = null;
+    });
   }
 }

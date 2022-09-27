@@ -25,8 +25,6 @@ class _HomePageState extends State<HomePage> {
   final ImagePicker _picker = ImagePicker();
   UploadTask? uploadTask;
 
-  late File _image;
-  late List _results;
   bool imageSelect = false;
 
   @override
@@ -181,7 +179,7 @@ class _HomePageState extends State<HomePage> {
   Widget getFooter() {
     List<IconData> iconItems = [Ionicons.home, Ionicons.time];
     return AnimatedBottomNavigationBar(
-        height: 64,
+        height: 54,
         icons: iconItems,
         activeColor: primary,
         splashColor: white,
@@ -209,10 +207,9 @@ class _HomePageState extends State<HomePage> {
         source: type,
       );
       File image = File(pickedFile!.path);
-
-      // clasification(image);
       _cropImage(image);
     } catch (error) {
+      // ignore: avoid_print
       print("error: $error");
     }
   }
@@ -234,7 +231,6 @@ class _HomePageState extends State<HomePage> {
     );
     if (croppedFile != null) {
       final fileImage = File(croppedFile.path);
-
       clasification(fileImage);
     }
   }
@@ -248,8 +244,6 @@ class _HomePageState extends State<HomePage> {
       imageStd: 127.5,
     );
     setState(() {
-      _results = recognitions!;
-      _image = image;
       imageSelect = true;
     });
     await Future.delayed(
