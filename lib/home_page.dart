@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ikan_laut_skripsi/pages/hasil_klasifikasi.dart';
 import 'package:ikan_laut_skripsi/pages/home.dart';
 import 'package:ikan_laut_skripsi/pages/riwayat.dart';
@@ -40,123 +41,150 @@ class _HomePageState extends State<HomePage> {
         labels: 'assets/model/labels.txt'))!;
   }
 
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Anda yakin?'),
+            content: const Text('Ingin keuar dari aplikasi'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () =>
+                    Navigator.of(context).pop(false), //<-- SEE HERE
+                child: const Text('Tidak'),
+              ),
+              TextButton(
+                onPressed: () => SystemNavigator.pop(), // <-- SEE HERE
+                child: const Text('Keluar'),
+              ),
+            ],
+          ),
+        )) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       color: white,
       child: SafeArea(
-        child: Scaffold(
-          backgroundColor: bgColor,
-          body: getBody(),
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: primary,
-            onPressed: () {
-              showModalBottomSheet<void>(
-                context: context,
-                builder: (BuildContext context) {
-                  return Container(
-                    height: 200,
-                    color: white,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            'Ambil Gambar:',
-                            style: TextStyle(
-                                color: black,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 16),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 40),
-                            width: double.infinity,
-                            child: TextButton(
-                              style: TextButton.styleFrom(
-                                backgroundColor: primary,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24, vertical: 16),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                alignment: Alignment.centerLeft,
-                              ),
-                              onPressed: (() {
-                                pickImage(ImageSource.camera);
-                                Navigator.pop(context);
-                              }),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Ionicons.camera,
-                                    color: white,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(
-                                    width: 14,
-                                  ),
-                                  Text(
-                                    'Kamera Handphone',
-                                    style: TextStyle(
-                                        color: white,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ],
+        child: WillPopScope(
+          onWillPop: _onWillPop,
+          child: Scaffold(
+            backgroundColor: bgColor,
+            body: getBody(),
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: primary,
+              onPressed: () {
+                showModalBottomSheet<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                      height: 200,
+                      color: white,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              'Ambil Gambar:',
+                              style: TextStyle(
+                                  color: black,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 16),
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            Container(
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 40),
+                              width: double.infinity,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  backgroundColor: primary,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 16),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  alignment: Alignment.centerLeft,
+                                ),
+                                onPressed: (() {
+                                  pickImage(ImageSource.camera);
+                                  Navigator.pop(context);
+                                }),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Ionicons.camera,
+                                      color: white,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(
+                                      width: 14,
+                                    ),
+                                    Text(
+                                      'Kamera Handphone',
+                                      style: TextStyle(
+                                          color: white,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 40),
-                            width: double.infinity,
-                            child: TextButton(
-                              style: TextButton.styleFrom(
-                                backgroundColor: primary,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24, vertical: 16),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                alignment: Alignment.centerLeft,
-                              ),
-                              onPressed: (() {
-                                pickImage(ImageSource.gallery);
-                                Navigator.pop(context);
-                              }),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Ionicons.images,
-                                    color: white,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(
-                                    width: 14,
-                                  ),
-                                  Text(
-                                    'Galeri Handphone',
-                                    style: TextStyle(
-                                        color: white,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ],
+                            Container(
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 40),
+                              width: double.infinity,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  backgroundColor: primary,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 16),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  alignment: Alignment.centerLeft,
+                                ),
+                                onPressed: (() {
+                                  pickImage(ImageSource.gallery);
+                                  Navigator.pop(context);
+                                }),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Ionicons.images,
+                                      color: white,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(
+                                      width: 14,
+                                    ),
+                                    Text(
+                                      'Galeri Handphone',
+                                      style: TextStyle(
+                                          color: white,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              );
-            },
-            tooltip: 'Ambil Gambar',
-            child: const Icon(Icons.camera_alt),
+                    );
+                  },
+                );
+              },
+              tooltip: 'Ambil Gambar',
+              child: const Icon(Icons.camera_alt),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            bottomNavigationBar: getFooter(),
           ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-          bottomNavigationBar: getFooter(),
         ),
       ),
     );
@@ -179,20 +207,21 @@ class _HomePageState extends State<HomePage> {
   Widget getFooter() {
     List<IconData> iconItems = [Ionicons.home, Ionicons.time];
     return AnimatedBottomNavigationBar(
-        height: 54,
-        icons: iconItems,
-        activeColor: primary,
-        splashColor: white,
-        inactiveColor: black.withOpacity(0.5),
-        gapLocation: GapLocation.center,
-        notchSmoothness: NotchSmoothness.defaultEdge,
-        rightCornerRadius: 8,
-        leftCornerRadius: 8,
-        iconSize: 24,
-        activeIndex: pageIndex,
-        onTap: (index) {
-          setTabs(index);
-        });
+      height: 54,
+      icons: iconItems,
+      activeColor: primary,
+      splashColor: white,
+      inactiveColor: black.withOpacity(0.5),
+      gapLocation: GapLocation.center,
+      notchSmoothness: NotchSmoothness.defaultEdge,
+      rightCornerRadius: 8,
+      leftCornerRadius: 8,
+      iconSize: 24,
+      activeIndex: pageIndex,
+      onTap: (index) {
+        setTabs(index);
+      },
+    );
   }
 
   setTabs(index) {

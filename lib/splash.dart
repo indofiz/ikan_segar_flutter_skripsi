@@ -37,6 +37,14 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
+  void checkEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final isEmail = prefs.getBool('isEmail') ?? false;
+    if (isEmail) {
+      redirect();
+    }
+  }
+
   void redirect() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final email = prefs.getString('email') ?? '';

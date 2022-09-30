@@ -3,6 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:ikan_laut_skripsi/components/no_data.dart';
 import 'package:ikan_laut_skripsi/components/prediksi.dart';
+import 'package:ikan_laut_skripsi/components/shimmer.dart';
 import 'package:ikan_laut_skripsi/components/title_section.dart';
 import 'package:ikan_laut_skripsi/pages/detail_klasifikasi.dart';
 import 'package:ikan_laut_skripsi/theme/colors.dart';
@@ -18,6 +19,22 @@ class Riwayat extends StatefulWidget {
 }
 
 class _RiwayatState extends State<Riwayat> {
+  late bool _isLoading;
+
+  @override
+  void initState() {
+    _isLoading = true;
+    Future.delayed(
+      const Duration(seconds: 4),
+      () => {
+        setState(() {
+          _isLoading = false;
+        })
+      },
+    );
+    super.initState();
+  }
+
   Stream<List<Prediksi>> readPrediksi() => FirebaseFirestore.instance
       .collection('prediksi')
       .where('email', isEqualTo: widget.email)
@@ -42,29 +59,38 @@ class _RiwayatState extends State<Riwayat> {
         const SizedBox(
           height: 24,
         ),
-        Expanded(
-          child: StreamBuilder<List<Prediksi>>(
-              stream: readPrediksi(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Something wrong! ${snapshot.error}');
-                } else if (snapshot.hasData) {
-                  final prediks = snapshot.data;
-                  return prediks == null || prediks.isEmpty
-                      ? const NoData()
-                      : SlidableAutoCloseBehavior(
-                          closeWhenOpened: true,
-                          child: ListView(
-                            children: prediks.map(buildPrediksi).toList(),
-                          ),
+        _isLoading
+            ? Expanded(
+                child: ListView.separated(
+                    itemBuilder: (context, index) => const ShimmerCard(),
+                    separatorBuilder: (context, index) => const SizedBox(
+                          height: 12,
+                        ),
+                    itemCount: 10),
+              )
+            : Expanded(
+                child: StreamBuilder<List<Prediksi>>(
+                    stream: readPrediksi(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text('Something wrong! ${snapshot.error}');
+                      } else if (snapshot.hasData) {
+                        final prediks = snapshot.data;
+                        return prediks == null || prediks.isEmpty
+                            ? const NoData()
+                            : SlidableAutoCloseBehavior(
+                                closeWhenOpened: true,
+                                child: ListView(
+                                  children: prediks.map(buildPrediksi).toList(),
+                                ),
+                              );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
                         );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }),
-        ),
+                      }
+                    }),
+              ),
       ],
     );
   }

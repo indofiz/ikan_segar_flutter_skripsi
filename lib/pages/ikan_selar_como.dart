@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:ikan_laut_skripsi/components/data_ikan_selar_como.dart';
+import 'package:ikan_laut_skripsi/components/table_ikan_selar_como.dart';
 import 'package:ikan_laut_skripsi/theme/colors.dart';
 import 'package:ikan_laut_skripsi/theme/text.dart';
 
@@ -38,7 +41,7 @@ class IkanSelarComo extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               width: double.infinity,
-              child: Image.asset('assets/ikan/selar_como.png'),
+              child: Image.asset('assets/ikan/selar_como1.png'),
             ),
             const SizedBox(
               height: 28,
@@ -51,27 +54,71 @@ class IkanSelarComo extends StatelessWidget {
             const SizedBox(
               height: 8,
             ),
-            Text(
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-              textAlign: TextAlign.justify,
-              style: paragraf,
-            ),
+            Html(data: dataSelarComo1),
+            Html(data: dataSelarComo2),
             const SizedBox(
               height: 32,
             ),
             Text(
-              'Morpologi',
+              'Habitat Sebaran',
               textAlign: TextAlign.start,
               style: title,
             ),
             const SizedBox(
               height: 8,
             ),
+            Html(data: habitatSebaran),
+            const SizedBox(
+              height: 32,
+            ),
             Text(
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-              textAlign: TextAlign.justify,
-              style: paragraf,
-            )
+              'Perilaku',
+              textAlign: TextAlign.start,
+              style: title,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Html(data: perilaku1),
+            Html(data: perilaku2),
+            const SizedBox(
+              height: 32,
+            ),
+            Text(
+              'Nilai Ekonomi',
+              textAlign: TextAlign.start,
+              style: title,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Html(data: nilaiEkonomi1),
+            Html(data: nilaiEkonomi2),
+            const SizedBox(
+              height: 32,
+            ),
+            Text(
+              'Status Konservasi',
+              textAlign: TextAlign.start,
+              style: title,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Html(data: statusKonservasi),
+            const SizedBox(
+              height: 32,
+            ),
+            Text(
+              'Klasifikasi',
+              textAlign: TextAlign.start,
+              style: title,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Html(data: klasifikasi),
+            const TableIkanSelarComo(),
           ],
         ),
       ),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:ikan_laut_skripsi/components/data_ikan_kembung.dart';
+import 'package:ikan_laut_skripsi/components/table_ikan_kembung.dart';
 import 'package:ikan_laut_skripsi/theme/colors.dart';
 import 'package:ikan_laut_skripsi/theme/text.dart';
 
@@ -38,7 +41,7 @@ class IkanKembung extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               width: double.infinity,
-              child: Image.asset('assets/ikan/kembung.jpeg'),
+              child: Image.asset('assets/ikan/kembung2.png'),
             ),
             const SizedBox(
               height: 28,
@@ -48,14 +51,23 @@ class IkanKembung extends StatelessWidget {
               textAlign: TextAlign.start,
               style: title,
             ),
+            Html(data: dataKembung1),
+            Html(data: dataKembung2),
+            Html(data: dataKembung3),
+            Html(data: dataKembung4),
+            Html(data: dataKembung5),
+            const SizedBox(
+              height: 32,
+            ),
+            Text(
+              'Klasifikasi Ikan Kembung',
+              textAlign: TextAlign.start,
+              style: title,
+            ),
             const SizedBox(
               height: 8,
             ),
-            Text(
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-              textAlign: TextAlign.justify,
-              style: paragraf,
-            ),
+            const TableIkanKembung(),
             const SizedBox(
               height: 32,
             ),
@@ -67,11 +79,81 @@ class IkanKembung extends StatelessWidget {
             const SizedBox(
               height: 8,
             ),
+            Html(data: morfologi1),
+            Html(data: morfologi2),
+            const SizedBox(
+              height: 32,
+            ),
             Text(
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-              textAlign: TextAlign.justify,
-              style: paragraf,
-            )
+              'Reproduksi',
+              textAlign: TextAlign.start,
+              style: title,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Html(data: reproduksi1),
+            Html(data: reproduksi2),
+            Html(data: reproduksi3),
+            Html(data: reproduksi4),
+            const SizedBox(
+              height: 32,
+            ),
+            Text(
+              'Habitat',
+              textAlign: TextAlign.start,
+              style: title,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Html(data: habitat1),
+            Html(data: habitat2),
+            const SizedBox(
+              height: 32,
+            ),
+            Text(
+              'Tingkah Laku',
+              textAlign: TextAlign.start,
+              style: title,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Html(data: tingkahlaku),
+            const SizedBox(
+              height: 32,
+            ),
+            Text(
+              'Peran Di Perairan',
+              textAlign: TextAlign.start,
+              style: title,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Html(data: peranikankembungdiperairan),
+            const SizedBox(
+              height: 32,
+            ),
+            Text(
+              'Manfaat Ikan',
+              textAlign: TextAlign.start,
+              style: title,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Html(data: manfaatikankembung),
+            Text(
+              'Penulis',
+              textAlign: TextAlign.start,
+              style: title,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Html(data: penulis),
           ],
         ),
       ),

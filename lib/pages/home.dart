@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ikan_laut_skripsi/components/card_ciri.dart';
 import 'package:ikan_laut_skripsi/components/no_histori.dart';
 import 'package:ikan_laut_skripsi/components/prediksi.dart';
+import 'package:ikan_laut_skripsi/components/shimmer.dart';
 import 'package:ikan_laut_skripsi/components/title_section.dart';
 import 'package:ikan_laut_skripsi/pages/detail_klasifikasi.dart';
 import 'package:ikan_laut_skripsi/theme/colors.dart';
@@ -16,6 +17,22 @@ class PageHome extends StatefulWidget {
 }
 
 class _PageHomeState extends State<PageHome> {
+  late bool _isLoading;
+
+  @override
+  void initState() {
+    _isLoading = true;
+    Future.delayed(
+      const Duration(seconds: 4),
+      () => {
+        setState(() {
+          _isLoading = false;
+        })
+      },
+    );
+    super.initState();
+  }
+
   Stream<List<Prediksi>> readPrediksi() => FirebaseFirestore.instance
       .collection('prediksi')
       .where('email', isEqualTo: widget.email)
@@ -35,30 +52,42 @@ class _PageHomeState extends State<PageHome> {
         children: [
           welcomePage(),
           Flexible(child: ciriIkan()),
-          Flexible(
-            child: StreamBuilder<List<Prediksi>>(
-              stream: readPrediksi(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Something wrong! ${snapshot.error}');
-                } else if (snapshot.hasData) {
-                  final prediks = snapshot.data;
-                  return prediks == null || prediks.isEmpty
-                      ? const NoHistori()
-                      : ListView(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          physics: const BouncingScrollPhysics(),
-                          children: prediks.map(buildPrediksi).toList(),
+          _isLoading
+              ? Flexible(
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (context, index) => const ShimmerCard(),
+                      separatorBuilder: (context, index) => const SizedBox(
+                            height: 12,
+                          ),
+                      itemCount: 2),
+                )
+              : Flexible(
+                  child: StreamBuilder<List<Prediksi>>(
+                    stream: readPrediksi(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text('Something wrong! ${snapshot.error}');
+                      } else if (snapshot.hasData) {
+                        final prediks = snapshot.data;
+                        return prediks == null || prediks.isEmpty
+                            ? const NoHistori()
+                            : ListView(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                physics: const BouncingScrollPhysics(),
+                                children: prediks.map(buildPrediksi).toList(),
+                              );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
                         );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            ),
-          ),
+                      }
+                    },
+                  ),
+                ),
           const SizedBox(
             height: 40,
           ),
@@ -76,7 +105,7 @@ class _PageHomeState extends State<PageHome> {
         const Padding(
           padding: EdgeInsets.only(bottom: 12),
           child: TitleSection(
-            title: 'Ketahui Ciri Ikan?',
+            title: 'Ikan Apa Saja?',
             subtitle: 'Hanya jenis berikut yang bisa diidentifikasi',
           ),
         ),
