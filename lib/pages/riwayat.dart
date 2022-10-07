@@ -20,6 +20,7 @@ class Riwayat extends StatefulWidget {
 
 class _RiwayatState extends State<Riwayat> {
   late bool _isLoading;
+  bool hasInternet = false;
 
   @override
   void initState() {
@@ -33,6 +34,10 @@ class _RiwayatState extends State<Riwayat> {
       },
     );
     super.initState();
+    // InternetConnectionChecker().onStatusChange.listen((status) {
+    //   final hasInternet = status == InternetConnectionStatus.connected;
+    //   setState(() => this.hasInternet = hasInternet);
+    // });
   }
 
   Stream<List<Prediksi>> readPrediksi() => FirebaseFirestore.instance
@@ -96,7 +101,6 @@ class _RiwayatState extends State<Riwayat> {
   }
 
   Widget buildPrediksi(Prediksi prediksi) {
-    // print(emailAwait);
     return Slidable(
       closeOnScroll: true,
       endActionPane: ActionPane(
