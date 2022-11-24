@@ -69,48 +69,54 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: bgColor,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: Lottie.asset('assets/lottie/splash.json'),
-                ),
-                Text(
-                  'Selamat Datang',
-                  style: TextStyle(
-                      color: black, fontSize: 24, fontWeight: FontWeight.w500),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 40),
-                  child: Text(
-                    'Sebelum masuk ke aplikasi, silahkan masukan email anda terlebih dahulu',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        height: 1.4,
-                        color: black.withOpacity(0.6),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w300),
-                  ),
-                )
-              ],
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 40),
-              child: Column(
+      body: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  nameForm(),
-                  buttonSubmit(),
+                  Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Lottie.asset('assets/lottie/splash.json'),
+                  ),
+                  Text(
+                    'Selamat Datang',
+                    style: TextStyle(
+                        color: black,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 40),
+                    child: Text(
+                      'Sebelum masuk ke aplikasi, silahkan masukan email anda terlebih dahulu',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          height: 1.4,
+                          color: black.withOpacity(0.6),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w300),
+                    ),
+                  )
                 ],
               ),
-            )
-          ],
+              Container(
+                margin: const EdgeInsets.only(top: 40),
+                child: Column(
+                  children: [
+                    nameForm(),
+                    buttonSubmit(),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
