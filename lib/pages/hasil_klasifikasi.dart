@@ -35,7 +35,7 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
   Future loadModel() async {
     Tflite.close();
     (await Tflite.loadModel(
-        model: "assets/model/model_unquant.tflite",
+        model: "assets/model/selar_como240_2.tflite",
         labels: 'assets/model/labels.txt'))!;
   }
 

@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   Future loadModel() async {
     Tflite.close();
     (await Tflite.loadModel(
-        model: "assets/model/model_unquant.tflite",
+        model: "assets/model/selar_como240_2.tflite",
         labels: 'assets/model/labels.txt'))!;
   }
 
