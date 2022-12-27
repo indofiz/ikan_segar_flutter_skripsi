@@ -1,4 +1,8 @@
-Busuk
-Sangat Busuk
-Sangat Segar
-Segar
+Selar Como Segar
+Selar Como Sangat Segar
+Selar Como Sangat Busuk
+Selar Como Busuk
+Kembung Segar
+Kembung Sangat Segar
+Kembung Sangat Busuk
+Kembung Busuk

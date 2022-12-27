@@ -23,7 +23,16 @@ class HasilKlasifikasi extends StatefulWidget {
 class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
   UploadTask? uploadTask;
 
-  List<Color> warna = [busuk, sangatBusuk, sangatSegar, segar];
+  List<Color> warna = [
+    busuk,
+    sangatBusuk,
+    sangatSegar,
+    segar,
+    busuk,
+    sangatBusuk,
+    sangatSegar,
+    segar
+  ];
 
   @override
   void initState() {
@@ -36,7 +45,7 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
   Future loadModel() async {
     Tflite.close();
     (await Tflite.loadModel(
-        model: "assets/model/kembung_full_1.tflite",
+        model: "assets/model/model_24_des.tflite",
         labels: 'assets/model/labels.txt'))!;
   }
 

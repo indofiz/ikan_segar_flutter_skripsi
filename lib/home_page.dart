@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   Future loadModel() async {
     Tflite.close();
     (await Tflite.loadModel(
-        model: "assets/model/kembung_full_1.tflite",
+        model: "assets/model/model_24_des.tflite",
         labels: 'assets/model/labels.txt'))!;
   }
 
@@ -267,7 +267,7 @@ class _HomePageState extends State<HomePage> {
   Future clasification(File image) async {
     var recognitions = await Tflite.runModelOnImage(
       path: image.path,
-      numResults: 4,
+      numResults: 8,
       threshold: 0.2,
       imageMean: 0.456, // defaults to 117.0
       imageStd: 0.224, // defaults to 1.0
