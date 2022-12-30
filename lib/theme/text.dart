@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ikan_laut_skripsi/theme/colors.dart';
+import 'package:ikan_laut_skripsi_v2/theme/colors.dart';
 
 var title = TextStyle(color: black, fontWeight: FontWeight.w600, fontSize: 18);
 var paragraf = TextStyle(

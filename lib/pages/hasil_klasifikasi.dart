@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:ikan_laut_skripsi/components/prediksi.dart';
-import 'package:ikan_laut_skripsi/components/title_section.dart';
-import 'package:ikan_laut_skripsi/theme/colors.dart';
+import 'package:ikan_laut_skripsi_v2/components/prediksi.dart';
+import 'package:ikan_laut_skripsi_v2/components/title_section.dart';
+import 'package:ikan_laut_skripsi_v2/theme/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tflite/tflite.dart';
+// import 'package:tflite/tflite.dart';
 
 class HasilKlasifikasi extends StatefulWidget {
   final File image;
@@ -34,19 +34,28 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
     segar
   ];
 
+  var ikanSegar =
+      'Ikan memilki banyak kandungan gizi esensial yang sangat bermanfaat bagi kesehatan dan kecerdasan. Ikan mengandung protein, karbohidrat, vitamin, mineral, asam lemak Omega 3, 6, 9 yang baik manfaat nya untuk tubuh manusia.';
+
+  var ikanBusuk =
+      'Ikan yang tidak segar atau membusuk berisiko membawa penyakit dan bisa membuat seseorang keracunan makanan. Sebabnya, daging ikan yang membusuk bisa jadi tempat berkembang biak bakteri.';
+
+  List<Color> warnaCon = [
+    busuk,
+    sangatBusuk,
+    sangatSegar,
+    segar,
+    busuk,
+    sangatBusuk,
+    sangatSegar,
+    segar
+  ];
+
   @override
   void initState() {
     super.initState();
-    loadModel();
     uploadImage(widget.image, widget.prediksi);
     print(widget.prediksi);
-  }
-
-  Future loadModel() async {
-    Tflite.close();
-    (await Tflite.loadModel(
-        model: "assets/model/model_24_des.tflite",
-        labels: 'assets/model/labels.txt'))!;
   }
 
   @override
@@ -82,10 +91,10 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
                   borderRadius: BorderRadius.circular(18)),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(
-                  minWidth: 184,
-                  minHeight: 184,
-                  maxWidth: 204,
-                  maxHeight: 204,
+                  minWidth: 240,
+                  minHeight: 240,
+                  maxWidth: 260,
+                  maxHeight: 260,
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
@@ -101,18 +110,69 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
               style: TextStyle(
                 color: warna[widget.prediksi[0]['index']],
                 fontWeight: FontWeight.w600,
-                fontSize: 32,
+                fontSize: 40,
               ),
             ),
             const SizedBox(
-              height: 2,
+              height: 4,
             ),
             Text(
-              'Selar Como (Hapau)',
+              "Jenis Ikan ${widget.prediksi[0]['jenis']}",
               style: TextStyle(
-                color: black.withOpacity(0.7),
+                color: black.withOpacity(0.8),
                 fontWeight: FontWeight.w500,
-                fontSize: 16,
+                fontSize: 24,
+              ),
+            ),
+            const SizedBox(
+              height: 32,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                  color: warnaCon[widget.prediksi[0]['index']].withOpacity(0.4),
+                  borderRadius: const BorderRadius.all(Radius.circular(12))),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.info_rounded,
+                          color: black,
+                          size: 20,
+                        ),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          "Sekilas Info",
+                          style: TextStyle(
+                            color: black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      widget.prediksi[0]['label']
+                              .toLowerCase()
+                              .contains('segar')
+                          ? ikanSegar
+                          : ikanBusuk,
+                      style: TextStyle(
+                          color: black.withOpacity(0.8), fontSize: 13),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ],
+                ),
               ),
             ),
             const Spacer(),

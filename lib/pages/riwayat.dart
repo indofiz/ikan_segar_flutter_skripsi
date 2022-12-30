@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:ikan_laut_skripsi/components/no_data.dart';
-import 'package:ikan_laut_skripsi/components/prediksi.dart';
-import 'package:ikan_laut_skripsi/components/shimmer.dart';
-import 'package:ikan_laut_skripsi/components/title_section.dart';
-import 'package:ikan_laut_skripsi/pages/detail_klasifikasi.dart';
-import 'package:ikan_laut_skripsi/theme/colors.dart';
+import 'package:ikan_laut_skripsi_v2/components/no_data.dart';
+import 'package:ikan_laut_skripsi_v2/components/prediksi.dart';
+import 'package:ikan_laut_skripsi_v2/components/shimmer.dart';
+import 'package:ikan_laut_skripsi_v2/components/title_section.dart';
+import 'package:ikan_laut_skripsi_v2/pages/detail_klasifikasi.dart';
+import 'package:ikan_laut_skripsi_v2/theme/colors.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ionicons/ionicons.dart';
 

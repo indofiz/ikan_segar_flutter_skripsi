@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:ikan_laut_skripsi/components/data_ikan_kembung.dart';
-import 'package:ikan_laut_skripsi/components/table_ikan_kembung.dart';
-import 'package:ikan_laut_skripsi/theme/colors.dart';
-import 'package:ikan_laut_skripsi/theme/text.dart';
+import 'package:ikan_laut_skripsi_v2/components/data_ikan_kembung.dart';
+import 'package:ikan_laut_skripsi_v2/components/table_ikan_kembung.dart';
+import 'package:ikan_laut_skripsi_v2/theme/colors.dart';
+import 'package:ikan_laut_skripsi_v2/theme/text.dart';
 
 class IkanKembung extends StatelessWidget {
   const IkanKembung({super.key});

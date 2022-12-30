@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ikan_laut_skripsi/theme/colors.dart';
+import 'package:ikan_laut_skripsi_v2/theme/colors.dart';
 
 class TitleSection extends StatelessWidget {
   final String title;
@@ -28,10 +28,11 @@ class TitleSection extends StatelessWidget {
             subtitle,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
-                textStyle: TextStyle(
-                    color: textFieldColor,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w300)),
+              textStyle: TextStyle(
+                  color: textFieldColor,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w300),
+            ),
           ),
         ),
       ],

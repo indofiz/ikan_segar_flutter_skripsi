@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:ikan_laut_skripsi/components/prediksi.dart';
-import 'package:ikan_laut_skripsi/components/title_section.dart';
-import 'package:ikan_laut_skripsi/theme/colors.dart';
+import 'package:ikan_laut_skripsi_v2/components/prediksi.dart';
+import 'package:ikan_laut_skripsi_v2/components/title_section.dart';
+import 'package:ikan_laut_skripsi_v2/theme/colors.dart';
 
 class DetailKlasifikasi extends StatefulWidget {
   final String id;
@@ -112,7 +112,7 @@ class _DetailKlasifikasiState extends State<DetailKlasifikasi> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4), color: primary),
               child: Text(
-                'Ikan Selar Como (Hapau)',
+                prediksi.prediksi[0]['jenis'].toString(),
                 style: TextStyle(
                   color: white,
                   fontWeight: FontWeight.w500,

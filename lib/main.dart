@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:ikan_laut_skripsi/components/dismiss_keyboard.dart';
-import 'package:ikan_laut_skripsi/home_page.dart';
-import 'package:ikan_laut_skripsi/splash.dart';
+import 'package:ikan_laut_skripsi_v2/components/dismiss_keyboard.dart';
+import 'package:ikan_laut_skripsi_v2/home_page.dart';
+import 'package:ikan_laut_skripsi_v2/splash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {

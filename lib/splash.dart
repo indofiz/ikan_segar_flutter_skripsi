@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ikan_laut_skripsi/home_page.dart';
-import 'package:ikan_laut_skripsi/theme/colors.dart';
+import 'package:ikan_laut_skripsi_v2/home_page.dart';
+import 'package:ikan_laut_skripsi_v2/theme/colors.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

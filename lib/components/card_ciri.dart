@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ikan_laut_skripsi/pages/ikan_kembung.dart';
-import 'package:ikan_laut_skripsi/pages/ikan_selar_como.dart';
-import 'package:ikan_laut_skripsi/theme/colors.dart';
+import 'package:ikan_laut_skripsi_v2/pages/ikan_kembung.dart';
+import 'package:ikan_laut_skripsi_v2/pages/ikan_selar_como.dart';
+import 'package:ikan_laut_skripsi_v2/theme/colors.dart';
 
 class CardCiri extends StatelessWidget {
   final String image;

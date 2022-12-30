@@ -4,14 +4,18 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ikan_laut_skripsi/pages/hasil_klasifikasi.dart';
-import 'package:ikan_laut_skripsi/pages/home.dart';
-import 'package:ikan_laut_skripsi/pages/riwayat.dart';
-import 'package:ikan_laut_skripsi/theme/colors.dart';
+import 'package:image/image.dart' as img;
+import 'package:ikan_laut_skripsi_v2/classifier/classifier.dart';
+import 'package:ikan_laut_skripsi_v2/classifier/classifier_quant.dart';
+import 'package:ikan_laut_skripsi_v2/pages/hasil_klasifikasi.dart';
+import 'package:ikan_laut_skripsi_v2/pages/home.dart';
+import 'package:ikan_laut_skripsi_v2/pages/riwayat.dart';
+import 'package:ikan_laut_skripsi_v2/theme/colors.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:tflite/tflite.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
+import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
 class HomePage extends StatefulWidget {
   final String email;
@@ -25,42 +29,89 @@ class _HomePageState extends State<HomePage> {
   int pageIndex = 0;
   final ImagePicker _picker = ImagePicker();
   UploadTask? uploadTask;
+  late Classifier _classifier;
+
+  var logger = Logger();
+
+  File? _image;
+
+  img.Image? fox;
+
+  Category? category;
 
   bool imageSelect = false;
 
   @override
   void initState() {
     super.initState();
-    loadModel();
+    _classifier = ClassifierQuant();
   }
 
-  Future loadModel() async {
-    Tflite.close();
-    (await Tflite.loadModel(
-        model: "assets/model/model_24_des.tflite",
-        labels: 'assets/model/labels.txt'))!;
+  Future<void> pickImage(ImageSource type) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: type,
+      );
+      File image = File(pickedFile!.path);
+      _cropImage(image);
+    } catch (error) {
+      // ignore: avoid_print
+      print("error: $error");
+    }
   }
 
-  Future<bool> _onWillPop() async {
-    return (await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Anda yakin?'),
-            content: const Text('Ingin keuar dari aplikasi'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () =>
-                    Navigator.of(context).pop(false), //<-- SEE HERE
-                child: const Text('Tidak'),
-              ),
-              TextButton(
-                onPressed: () => SystemNavigator.pop(), // <-- SEE HERE
-                child: const Text('Keluar'),
-              ),
-            ],
+  Future<void> _cropImage(File pickedFile) async {
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: pickedFile.path,
+      // aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      aspectRatioPresets: [CropAspectRatioPreset.square],
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: primary,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: true,
+        )
+      ],
+    );
+    if (croppedFile != null) {
+      setState(() {
+        _image = File(croppedFile.path);
+        _predict();
+      });
+    }
+  }
+
+  void _predict() async {
+    img.Image imageInput = img.decodeImage(_image!.readAsBytesSync())!;
+    var pred = _classifier.predict(imageInput);
+    var labelRaw = pred.label;
+    final info = labelRaw.split('-');
+    Map<String, dynamic> predik = {
+      'index': int.parse(info[0]),
+      'jenis': info[1],
+      'label': info[2],
+      'confidence': pred.score
+    };
+    List<Map> hasilPrediksi = [predik];
+    print(hasilPrediksi);
+    setState(() {
+      imageSelect = true;
+    });
+    await Future.delayed(
+      const Duration(milliseconds: 300),
+      () => {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                HasilKlasifikasi(image: _image!, prediksi: hasilPrediksi),
           ),
-        )) ??
-        false;
+        )
+      },
+    );
+    // uploadImage(image, recognitions!);
   }
 
   @override
@@ -230,64 +281,25 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> pickImage(ImageSource type) async {
-    try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: type,
-      );
-      File image = File(pickedFile!.path);
-      _cropImage(image);
-    } catch (error) {
-      // ignore: avoid_print
-      print("error: $error");
-    }
-  }
-
-  Future<void> _cropImage(File pickedFile) async {
-    CroppedFile? croppedFile = await ImageCropper().cropImage(
-      sourcePath: pickedFile.path,
-      // aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
-      aspectRatioPresets: [CropAspectRatioPreset.square],
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: 'Cropper',
-          toolbarColor: primary,
-          toolbarWidgetColor: Colors.white,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: true,
-        )
-      ],
-    );
-    if (croppedFile != null) {
-      final fileImage = File(croppedFile.path);
-      clasification(fileImage);
-    }
-  }
-
-  Future clasification(File image) async {
-    var recognitions = await Tflite.runModelOnImage(
-      path: image.path,
-      numResults: 8,
-      threshold: 0.2,
-      imageMean: 0.456, // defaults to 117.0
-      imageStd: 0.224, // defaults to 1.0
-    );
-
-    setState(() {
-      imageSelect = true;
-    });
-    await Future.delayed(
-      const Duration(milliseconds: 300),
-      () => {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                HasilKlasifikasi(image: image, prediksi: recognitions!),
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Anda yakin?'),
+            content: const Text('Ingin keuar dari aplikasi'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () =>
+                    Navigator.of(context).pop(false), //<-- SEE HERE
+                child: const Text('Tidak'),
+              ),
+              TextButton(
+                onPressed: () => SystemNavigator.pop(), // <-- SEE HERE
+                child: const Text('Keluar'),
+              ),
+            ],
           ),
-        )
-      },
-    );
-    // uploadImage(image, recognitions!);
+        )) ??
+        false;
   }
 }
