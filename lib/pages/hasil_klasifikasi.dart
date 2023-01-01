@@ -72,7 +72,7 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
 
   Widget bodyHasil() {
     return Center(
-      child: Container(
+      child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
         child: Column(
           children: [
