@@ -13,7 +13,33 @@ class DetailKlasifikasi extends StatefulWidget {
 }
 
 class _DetailKlasifikasiState extends State<DetailKlasifikasi> {
-  List<Color> warna = [sangatSegar, segar, busuk, sangatBusuk];
+  List<Color> warna = [
+    busuk,
+    sangatBusuk,
+    sangatSegar,
+    segar,
+    busuk,
+    sangatBusuk,
+    sangatSegar,
+    segar
+  ];
+
+  var ikanSegar =
+      'Ikan memilki banyak kandungan gizi esensial yang sangat bermanfaat bagi kesehatan dan kecerdasan. Ikan mengandung protein, karbohidrat, vitamin, mineral, asam lemak Omega 3, 6, 9 yang baik manfaat nya untuk tubuh manusia.';
+
+  var ikanBusuk =
+      'Ikan yang tidak segar atau membusuk berisiko membawa penyakit dan bisa membuat seseorang keracunan makanan. Sebabnya, daging ikan yang membusuk bisa jadi tempat berkembang biak bakteri.';
+
+  List<Color> warnaCon = [
+    busuk,
+    sangatBusuk,
+    sangatSegar,
+    segar,
+    busuk,
+    sangatBusuk,
+    sangatSegar,
+    segar
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -21,21 +47,24 @@ class _DetailKlasifikasiState extends State<DetailKlasifikasi> {
       color: white,
       child: SafeArea(
         child: Scaffold(
-          body: FutureBuilder<Prediksi?>(
-            future: readPrediksi(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final hasil = snapshot.data;
-                return hasil == null
-                    ? const Center(child: Text('Data tidak ada'))
-                    : bodyHasil(hasil);
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            },
+          body: SingleChildScrollView(
+            child: FutureBuilder<Prediksi?>(
+              future: readPrediksi(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final hasil = snapshot.data;
+                  return hasil == null
+                      ? const Center(child: Text('Data tidak ada'))
+                      : bodyHasil(hasil);
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
           ),
+          bottomNavigationBar: bottomNavBar(),
         ),
       ),
     );
@@ -71,10 +100,10 @@ class _DetailKlasifikasiState extends State<DetailKlasifikasi> {
                   borderRadius: BorderRadius.circular(18)),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(
-                  minWidth: 184,
-                  minHeight: 184,
-                  maxWidth: 204,
-                  maxHeight: 204,
+                  minWidth: 240,
+                  minHeight: 240,
+                  maxWidth: 260,
+                  maxHeight: 260,
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
@@ -90,56 +119,108 @@ class _DetailKlasifikasiState extends State<DetailKlasifikasi> {
               style: TextStyle(
                 color: warna[prediksi.prediksi[0]['index']],
                 fontWeight: FontWeight.w600,
-                fontSize: 32,
+                fontSize: 40,
               ),
             ),
             const SizedBox(
-              height: 2,
+              height: 4,
             ),
             Text(
-              '${prediksi.waktu} - ${prediksi.tanggal}',
+              "Jenis Ikan ${prediksi.prediksi[0]['jenis'].toString()}",
               style: TextStyle(
-                color: black.withOpacity(0.7),
+                color: black.withOpacity(0.8),
                 fontWeight: FontWeight.w500,
-                fontSize: 16,
+                fontSize: 24,
               ),
             ),
             const SizedBox(
               height: 8,
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4), color: primary),
-              child: Text(
-                prediksi.prediksi[0]['jenis'].toString(),
-                style: TextStyle(
-                  color: white,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12,
-                ),
+            Text(
+              '${prediksi.tanggal} - ${prediksi.waktu} ',
+              style: TextStyle(
+                color: black.withOpacity(0.5),
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
               ),
             ),
-            const Spacer(),
-            Container(
-              padding: EdgeInsets.zero,
-              width: double.infinity,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: primary,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  alignment: Alignment.center,
+            const SizedBox(
+              height: 32,
+            ),
+            infoSaja(prediksi),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget bottomNavBar() {
+    return Container(
+      padding: const EdgeInsets.only(left: 24, right: 24, top: 4, bottom: 24),
+      width: double.infinity,
+      child: TextButton(
+        style: TextButton.styleFrom(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(0),
+            ),
+          ),
+          backgroundColor: primary,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          alignment: Alignment.center,
+        ),
+        onPressed: () => Navigator.of(context).pop(),
+        child: Text(
+          'Kembali',
+          style: TextStyle(color: white),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  Widget infoSaja(Prediksi prediksi) {
+    return Container(
+      decoration: BoxDecoration(
+          color: warnaCon[prediksi.prediksi[0]['index']].withOpacity(0.4),
+          borderRadius: const BorderRadius.all(Radius.circular(12))),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.info_rounded,
+                  color: black,
+                  size: 20,
                 ),
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text(
-                  'Kembali',
-                  style: TextStyle(color: white),
-                  textAlign: TextAlign.center,
+                const SizedBox(
+                  width: 4,
                 ),
-              ),
-            )
+                Text(
+                  "Sekilas Info",
+                  style: TextStyle(
+                    color: black,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Text(
+              prediksi.prediksi[0]['label'].toLowerCase().contains('segar')
+                  ? ikanSegar
+                  : ikanBusuk,
+              style: TextStyle(color: black.withOpacity(0.8), fontSize: 13),
+              textAlign: TextAlign.justify,
+            ),
           ],
         ),
       ),

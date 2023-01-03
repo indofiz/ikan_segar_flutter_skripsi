@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   var logger = Logger();
 
   File? _image;
+  File? _imageCropped;
 
   img.Image? fox;
 
@@ -75,9 +76,12 @@ class _HomePageState extends State<HomePage> {
         )
       ],
     );
+
     if (croppedFile != null) {
       setState(() {
         _image = File(croppedFile.path);
+        print(_image);
+        // Image _imageCropped = img.copyResize(Image src, { int? 224, int? 224, img.Interpolation interpolation = Interpolation.nearest });
         _predict();
       });
     }
@@ -95,7 +99,7 @@ class _HomePageState extends State<HomePage> {
       'confidence': pred.score
     };
     List<Map> hasilPrediksi = [predik];
-    print(hasilPrediksi);
+    // print(hasilPrediksi);
     setState(() {
       imageSelect = true;
     });

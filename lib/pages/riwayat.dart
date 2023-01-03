@@ -138,9 +138,23 @@ class _RiwayatState extends State<Riwayat> {
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(prediksi.urlgambar, fit: BoxFit.cover)),
           ),
-          title: Text(
-            prediksi.prediksi[0]['label'].toString(),
-            style: const TextStyle(fontWeight: FontWeight.w500),
+          title: Row(
+            children: [
+              Text(
+                prediksi.prediksi[0]['label'].toString(),
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              Text(
+                " (${prediksi.prediksi[0]['jenis'].toString()})",
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
+                  color: prediksi.prediksi[0]['jenis'] == 'Kembung'
+                      ? busuk
+                      : sangatSegar,
+                ),
+              ),
+            ],
           ),
           subtitle: Text('${prediksi.tanggal} - ${prediksi.waktu}'),
           onTap: () {

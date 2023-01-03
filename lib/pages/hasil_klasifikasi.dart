@@ -64,7 +64,8 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
       color: white,
       child: SafeArea(
         child: Scaffold(
-          body: bodyHasil(),
+          body: SingleChildScrollView(child: bodyHasil()),
+          bottomNavigationBar: bottomNavBar(),
         ),
       ),
     );
@@ -127,79 +128,89 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
             const SizedBox(
               height: 32,
             ),
-            Container(
-              decoration: BoxDecoration(
-                  color: warnaCon[widget.prediksi[0]['index']].withOpacity(0.4),
-                  borderRadius: const BorderRadius.all(Radius.circular(12))),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.info_rounded,
-                          color: black,
-                          size: 20,
-                        ),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          "Sekilas Info",
-                          style: TextStyle(
-                            color: black,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      widget.prediksi[0]['label']
-                              .toLowerCase()
-                              .contains('segar')
-                          ? ikanSegar
-                          : ikanBusuk,
-                      style: TextStyle(
-                          color: black.withOpacity(0.8), fontSize: 13),
-                      textAlign: TextAlign.justify,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const Spacer(),
-            Container(
-              padding: EdgeInsets.zero,
-              width: double.infinity,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(0))),
-                  backgroundColor: primary,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  alignment: Alignment.center,
-                ),
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text(
-                  'Kembali',
-                  style: TextStyle(color: white),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            buildProgress()
+            infoSaja(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget infoSaja() {
+    return Container(
+      decoration: BoxDecoration(
+          color: warnaCon[widget.prediksi[0]['index']].withOpacity(0.4),
+          borderRadius: const BorderRadius.all(Radius.circular(12))),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.info_rounded,
+                  color: black,
+                  size: 20,
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  "Sekilas Info",
+                  style: TextStyle(
+                    color: black,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Text(
+              widget.prediksi[0]['label'].toLowerCase().contains('segar')
+                  ? ikanSegar
+                  : ikanBusuk,
+              style: TextStyle(color: black.withOpacity(0.8), fontSize: 13),
+              textAlign: TextAlign.justify,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget bottomNavBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      height: 86,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextButton(
+            style: TextButton.styleFrom(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(0),
+                ),
+              ),
+              backgroundColor: primary,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              alignment: Alignment.center,
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'Kembali',
+              style: TextStyle(color: white),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          buildProgress()
+        ],
       ),
     );
   }
