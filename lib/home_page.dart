@@ -78,10 +78,11 @@ class _HomePageState extends State<HomePage> {
     );
 
     if (croppedFile != null) {
+      String fileName = croppedFile.path.split('/').last;
+
       setState(() {
         _image = File(croppedFile.path);
         print(_image);
-        // Image _imageCropped = img.copyResize(Image src, { int? 224, int? 224, img.Interpolation interpolation = Interpolation.nearest });
         _predict();
       });
     }

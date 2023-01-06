@@ -7,7 +7,10 @@ import 'package:ikan_laut_skripsi_v2/components/prediksi.dart';
 import 'package:ikan_laut_skripsi_v2/components/title_section.dart';
 import 'package:ikan_laut_skripsi_v2/theme/colors.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image/image.dart' as img;
+
 // import 'package:tflite/tflite.dart';
 
 class HasilKlasifikasi extends StatefulWidget {
@@ -243,12 +246,23 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
       );
 
   Future uploadImage(File image, List prediksi) async {
+    // RESIZE IMAGE
+    String fileName = image.path.split('/').last;
+    final imageResize = img.decodeJpg(File(image.path).readAsBytesSync());
+    // Resize the image to a 120x? thumbnail (maintaining the aspect ratio).
+    final thumbnail = img.copyResize(imageResize!, width: 224);
+    // Save the thumbnail to a jpeg file.
+    final thumb_224 = img.encodeJpg(thumbnail);
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    await File('$tempPath/$fileName').writeAsBytes(thumb_224);
+
+    // UPLOAD PROCESS
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? email = prefs.getString('email');
     String tanggal = DateFormat("yyyy-MM-dd").format(DateTime.now());
     String waktu = DateFormat("HH:mm:ss").format(DateTime.now());
     DateTime createdAt = DateTime.now();
-    String fileName = image.path.split('/').last;
     final path = 'files/$fileName';
     final ref = FirebaseStorage.instance.ref().child(path);
     setState(() {
