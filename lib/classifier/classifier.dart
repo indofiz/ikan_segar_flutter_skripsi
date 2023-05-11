@@ -103,6 +103,8 @@ abstract class Classifier {
             labels, _probabilityProcessor.process(_outputBuffer))
         .getMapWithFloatValue();
     final pred = getTopProbability(labeledProb);
+    print('labeledProb');
+    print(labeledProb);
     return Category(pred.key, pred.value);
   }
 

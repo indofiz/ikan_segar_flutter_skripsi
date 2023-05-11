@@ -6,7 +6,10 @@ import 'package:ikan_laut_skripsi_v2/components/prediksi.dart';
 import 'package:ikan_laut_skripsi_v2/components/shimmer.dart';
 import 'package:ikan_laut_skripsi_v2/components/title_section.dart';
 import 'package:ikan_laut_skripsi_v2/pages/detail_klasifikasi.dart';
+import 'package:ikan_laut_skripsi_v2/splash.dart';
 import 'package:ikan_laut_skripsi_v2/theme/colors.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PageHome extends StatefulWidget {
   final String email;
@@ -31,6 +34,11 @@ class _PageHomeState extends State<PageHome> {
       },
     );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Stream<List<Prediksi>> readPrediksi() => FirebaseFirestore.instance
@@ -150,15 +158,88 @@ class _PageHomeState extends State<PageHome> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Selamat Datang',
-            style: TextStyle(
-                color: white, fontWeight: FontWeight.w600, fontSize: 18),
-          ),
-          Text(
-            widget.email,
-            style: TextStyle(
-                color: white, fontWeight: FontWeight.w400, fontSize: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Selamat Datang',
+                    style: TextStyle(
+                        color: white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18),
+                  ),
+                  Text(
+                    widget.email,
+                    style: TextStyle(
+                        color: white,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12),
+                  ),
+                ],
+              ),
+              IconButton(
+                alignment: Alignment.centerRight,
+                iconSize: 24,
+                onPressed: () {
+                  showModalBottomSheet<void>(
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                        child: Container(
+                          height: 120,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          color: Colors.white,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
+                                      backgroundColor: primary,
+                                      textStyle: const TextStyle(fontSize: 16),
+                                    ),
+                                    onPressed: () async {
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+                                      await prefs.setBool('isEmail', false);
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SplashScreen(),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      'LOGOUT & RESET EMAIL',
+                                      style: TextStyle(color: white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(Icons.settings),
+                color: Colors.white,
+              )
+            ],
           ),
           const SizedBox(
             height: 8,

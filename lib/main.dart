@@ -29,9 +29,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: isEmail == true
-            ? HomePage(email: email)
-            : SplashScreen(email: email),
+        home: isEmail == true ? HomePage(email: email) : const SplashScreen(),
       ),
     );
   }

@@ -1,0 +1,1 @@
+{0-Kembung-Busuk: 8.229096692957683e-7, 1-Kembung-Sangat Busuk: 0.000014180504877003841, 2-Kembung-Sangat Segar: 7.044388943694413e-12, 3-Kembung-Segar: 2.3990587294520083e-10, 4-Selar Como-Busuk: 0.00003786422166740522, 5-Selar Como-Sangat Busuk: 0.003868699772283435, 6-Selar Como-Sangat Segar: 2.7042162953350157e-10, 7-Selar Como-Segar: 5.120848189932303e-10}
