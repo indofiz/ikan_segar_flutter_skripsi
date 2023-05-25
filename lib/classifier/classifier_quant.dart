@@ -6,7 +6,7 @@ class ClassifierQuant extends Classifier {
   ClassifierQuant({int numThreads: 1}) : super(numThreads: numThreads);
 
   @override
-  String get modelName => 'model_24_des.tflite';
+  String get modelName => 'model_selar_como_24_mei.tflite';
 
   @override
   NormalizeOp get preProcessNormalizeOp => NormalizeOp(0, 1);

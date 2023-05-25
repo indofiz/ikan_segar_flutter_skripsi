@@ -23,7 +23,7 @@ abstract class Classifier {
 
   final String _labelsFileName = 'assets/labels.txt';
 
-  final int _labelsLength = 8;
+  final int _labelsLength = 4;
 
   late var _probabilityProcessor;
 
