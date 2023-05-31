@@ -83,7 +83,9 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _image = File(croppedFile.path);
         print(_image);
-        _predict();
+        if (_image != null) {
+          _predict();
+        }
       });
     }
   }
