@@ -109,13 +109,16 @@ class _HomePageState extends State<HomePage> {
     await Future.delayed(
       const Duration(milliseconds: 300),
       () => {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                HasilKlasifikasi(image: _image!, prediksi: hasilPrediksi),
-          ),
-        )
+        if (_image != null)
+          {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    HasilKlasifikasi(image: _image!, prediksi: hasilPrediksi),
+              ),
+            )
+          }
       },
     );
     // uploadImage(image, recognitions!);

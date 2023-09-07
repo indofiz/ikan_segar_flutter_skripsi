@@ -42,7 +42,7 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
 
   var ikanBusuk =
       'Ikan yang tidak segar atau membusuk berisiko membawa penyakit dan bisa membuat seseorang keracunan makanan. Sebabnya, daging ikan yang membusuk bisa jadi tempat berkembang biak bakteri.';
-
+  bool _isLoading = true;
   List<Color> warnaCon = [
     busuk,
     sangatBusuk,
@@ -59,6 +59,11 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
     super.initState();
     uploadImage(widget.image, widget.prediksi);
     print(widget.prediksi);
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   @override
@@ -100,10 +105,15 @@ class _HasilKlasifikasiState extends State<HasilKlasifikasi> {
                   maxWidth: 260,
                   maxHeight: 260,
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.file(widget.image, fit: BoxFit.cover),
-                ),
+                child: !_isLoading
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(widget.image, fit: BoxFit.cover),
+                      )
+                    : const Padding(
+                        padding: EdgeInsets.all(24),
+                        child: CircularProgressIndicator(),
+                      ),
               ),
             ),
             const SizedBox(

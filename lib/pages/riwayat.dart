@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ikan_laut_skripsi_v2/components/no_data.dart';
 import 'package:ikan_laut_skripsi_v2/components/prediksi.dart';
 import 'package:ikan_laut_skripsi_v2/components/shimmer.dart';
@@ -48,6 +49,12 @@ class _RiwayatState extends State<Riwayat> {
       .map((snapshot) =>
           snapshot.docs.map((doc) => Prediksi.fromJson(doc.data())).toList());
 
+  Stream<QuerySnapshot> countPrediksi() => FirebaseFirestore.instance
+      .collection('prediksi')
+      .where('email', isEqualTo: widget.email)
+      .orderBy('createdAt', descending: true)
+      .snapshots();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -62,7 +69,39 @@ class _RiwayatState extends State<Riwayat> {
           subtitle: 'Berikut riwayat ikan diidentifikasi yang pernah dilakukan',
         ),
         const SizedBox(
-          height: 24,
+          height: 12,
+        ),
+        //
+        _isLoading
+            ? const Text('Loading...')
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Text('Total Data : '),
+                    Expanded(
+                      flex: 0,
+                      child: StreamBuilder<QuerySnapshot>(
+                          stream: countPrediksi(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Text('Something wrong! ${snapshot.error}');
+                            } else if (snapshot.hasData) {
+                              final count = snapshot.data?.docs;
+                              return Text(count?.length.toString() ?? '0');
+                            } else {
+                              return const Center(
+                                child: Text('0'),
+                              );
+                            }
+                          }),
+                    ),
+                  ],
+                ),
+              ),
+        const SizedBox(
+          height: 12,
         ),
         _isLoading
             ? Expanded(
